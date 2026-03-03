@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seismic PFP Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#161616;--s1:#1e1518;--b1:#2e1f27;--b2:#3d2a34;--plum:#523040;--mauve:#825A6D;--gold:#A6924D;--gold2:rgba(166,146,77,0.12);--cream:#D1CCBF;--text:#a89f96;--muted:#5a4a50;--muted2:#7a6068;--green:#6dbf8a;--orange:#c97a4a}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.bg{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 100% 70% at 0% 0%,rgba(82,48,64,0.45) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 100% 100%,rgba(130,90,109,0.2) 0%,transparent 55%)}
+.noise{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+header{border-bottom:1px solid var(--b1);background:rgba(22,16,18,0.92);backdrop-filter:blur(24px);position:sticky;top:0;z-index:200}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 0}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,rgba(82,48,64,.9),rgba(166,146,77,.3));border:1px solid rgba(166,146,77,.4);border-radius:9px;display:flex;align-items:center;justify-content:center}
+.logo-name{font-size:17px;font-weight:800;color:var(--cream);letter-spacing:-.4px}
+.logo-name em{font-style:normal;color:var(--gold)}
+.tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;background:var(--gold2);border:1px solid rgba(166,146,77,.3);color:var(--gold);padding:3px 8px;border-radius:20px;text-transform:uppercase}
+.net{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted2);display:flex;align-items:center;gap:6px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.wavebar{height:1px;background:linear-gradient(90deg,transparent,var(--plum) 20%,var(--mauve) 45%,var(--gold) 60%,var(--mauve) 80%,transparent);background-size:300% 100%;animation:wm 6s linear infinite;margin:32px 0 28px;opacity:.7}
+@keyframes wm{0%{background-position:-100% 0}100%{background-position:200% 0}}
+.hero{text-align:center;padding:36px 0 28px}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;opacity:.8}
+.hero h1{font-size:clamp(26px,5vw,46px);font-weight:800;color:var(--cream);line-height:1.1;letter-spacing:-1.5px;margin-bottom:10px}
+.hero h1 span{color:var(--gold)}
+.hero p{font-size:13px;color:var(--muted2);line-height:1.7;max-width:460px;margin:0 auto}
+.main-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+@media(max-width:700px){.main-grid{grid-template-columns:1fr}}
+.panel{background:var(--s1);border:1px solid var(--b2);border-radius:18px;padding:24px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:16px}
+.panel::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(82,48,64,.15) 0%,transparent 60%);pointer-events:none}
+.ptitle{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;position:relative;z-index:1}
+.ptitle::before{content:'';width:3px;height:13px;background:var(--gold);border-radius:2px;flex-shrink:0}
+.drop-zone{border:2px dashed var(--b2);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:all .3s;position:relative;z-index:1;background:rgba(0,0,0,.15)}
+.drop-zone:hover,.drop-zone.over{border-color:rgba(166,146,77,.5);background:var(--gold2)}
+.drop-icon{font-size:32px;margin-bottom:10px;display:block}
+.drop-t{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:4px}
+.drop-s{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);line-height:1.6}
+.drop-zone input{display:none}
+.prev-wrap{position:relative;z-index:1}
+.prev-img{width:100%;aspect-ratio:1;border-radius:12px;object-fit:cover;display:none;border:1px solid var(--b2)}
+.prev-img.show{display:block}
+.prev-ph{width:100%;aspect-ratio:1;border-radius:12px;background:rgba(0,0,0,.2);border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px}
+.prev-ph.hide{display:none}
+.prev-ph span{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);text-align:center}
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:relative;z-index:1}
+.sbtn{background:rgba(0,0,0,.2);border:1px solid var(--b1);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .2s;text-align:left}
+.sbtn:hover{border-color:var(--b2);background:rgba(82,48,64,.2)}
+.sbtn.active{border-color:rgba(166,146,77,.5);background:var(--gold2)}
+.sbtn.active .sname{color:var(--gold)}
+.semoji{font-size:15px;margin-bottom:3px;display:block}
+.sname{font-size:11px;font-weight:700;color:var(--cream);display:block;margin-bottom:1px}
+.sdesc{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);line-height:1.4}
+.gen-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--plum),var(--mauve));border:1px solid rgba(166,146,77,.25);border-radius:12px;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--cream);cursor:pointer;transition:all .25s;position:relative;z-index:1}
+.gen-btn:hover:not(:disabled){box-shadow:0 6px 24px rgba(130,90,109,.4);transform:translateY(-2px)}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.res-wrap{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.3);border:1px solid var(--b1)}
+.res-img{width:100%;height:100%;object-fit:cover;display:none}
+.res-img.show{display:block}
+.res-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.res-ph.hide{display:none}
+.pulse{width:56px;height:56px;border-radius:50%;border:2px solid rgba(166,146,77,.3);display:flex;align-items:center;justify-content:center;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(166,146,77,.3)}50%{box-shadow:0 0 0 12px rgba(166,146,77,0)}}
+.res-ph span{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);text-align:center;padding:0 16px;line-height:1.6}
+.load-ov{position:absolute;inset:0;background:rgba(22,16,18,.88);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;border-radius:14px;z-index:10}
+.load-ov.show{display:flex}
+.load-bar-wrap{width:160px;height:4px;background:var(--b1);border-radius:99px;overflow:hidden}
+.load-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--plum),var(--gold));animation:lb 2.5s ease-in-out infinite}
+@keyframes lb{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+.load-txt{font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);text-align:center}
+.prompt-box{background:rgba(0,0,0,.25);border:1px solid var(--b1);border-radius:10px;padding:12px 14px;position:relative;z-index:1}
+.plbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.ptxt{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted2);line-height:1.6}
+.res-actions{display:flex;gap:8px;position:relative;z-index:1}
+.abtn{flex:1;padding:11px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;border:1px solid;text-align:center}
+.abtn.p{background:linear-gradient(135deg,var(--plum),var(--mauve));border-color:rgba(166,146,77,.2);color:var(--cream)}
+.abtn.p:hover{box-shadow:0 4px 16px rgba(130,90,109,.3);transform:translateY(-1px)}
+.abtn.s{background:var(--gold2);border-color:rgba(166,146,77,.3);color:var(--gold)}
+.abtn.s:hover{background:rgba(166,146,77,.2)}
+.abtn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.orn{display:flex;align-items:center;gap:14px;margin:24px 0;opacity:.35}
+.orn::before,.orn::after{content:'';flex:1;height:1px}
+.orn::before{background:linear-gradient(90deg,transparent,var(--gold))}
+.orn::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.orn span{font-family:'Space Mono',monospace;font-size:9px;color:var(--gold);letter-spacing:3px;white-space:nowrap}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:36px}
+@media(max-width:600px){.how-grid{grid-template-columns:1fr}}
+.hcard{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:18px;transition:border-color .3s,transform .2s}
+.hcard:hover{border-color:var(--b2);transform:translateY(-2px)}
+.hnum{font-family:'Space Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;margin-bottom:8px}
+.htitle{font-size:12px;font-weight:700;color:var(--cream);margin-bottom:5px}
+.hdesc{font-size:11px;color:var(--muted2);line-height:1.6}
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:36px}
+@media(max-width:600px){.gal-grid{grid-template-columns:repeat(2,1fr)}}
+.gitem{border-radius:12px;overflow:hidden;border:1px solid var(--b1);transition:transform .2s,border-color .2s}
+.gitem:hover{transform:scale(1.04);border-color:rgba(166,146,77,.3)}
+.gitem img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--b1)}
+.glbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);padding:6px 8px;background:var(--s1)}
+.err{font-family:'Space Mono',monospace;font-size:11px;color:var(--orange);background:rgba(201,122,74,.06);border:1px solid rgba(201,122,74,.2);border-radius:8px;padding:10px 16px;margin-bottom:16px;display:none}
+.err.show{display:block}
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;background:#251a1f;border:1px solid rgba(166,146,77,.25);border-radius:10px;padding:10px 16px;font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+.toast.show{transform:translateY(0);opacity:1}
+footer{border-top:1px solid var(--b1);padding:20px 0 28px;margin-top:8px}
+.foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.foot-l{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)}
+.foot-links{display:flex;gap:18px}
+.foot-links a{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:var(--gold)}
+main{padding:0 0 40px}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="noise"></div>
+<header>
+  <div class="wrap">
+    <div class="hdr">
+      <a class="logo" href="#">
+        <div class="logo-icon">
+          <svg viewBox="0 0 20 20" fill="none" width="20" height="20">
+            <circle cx="10" cy="8" r="4" stroke="#A6924D" stroke-width="1.5"/>
+            <path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="#A6924D" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M15 3l2-2M17 7h1.5" stroke="#A6924D" stroke-width="1" stroke-linecap="round" opacity=".5"/>
+          </svg>
+        </div>
+        <span class="logo-name">Seismic<em>PFP</em></span>
+        <span class="tag">AI Generator</span>
+      </a>
+      <div class="net"><div class="dot"></div>Pollinations AI · Free</div>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="wavebar"></div>
+    <div class="hero">
+      <div class="eyebrow">AI Profile Picture Generator</div>
+      <h1>Transform your photo<br>into <span>Seismic art</span></h1>
+      <p>Upload any photo — our AI transforms it into a Web3 themed PFP. Powered by Pollinations AI, completely free, no sign up needed.</p>
+    </div>
+    <div class="err" id="errBar"></div>
+    <div class="main-grid">
+      <div class="panel">
+        <div class="ptitle">1 — Upload Your Photo</div>
+        <div class="drop-zone" id="dropZone">
+          <span class="drop-icon">📸</span>
+          <div class="drop-t">Drop photo here</div>
+          <div class="drop-s">or click to browse · JPG PNG WEBP · max 5MB</div>
+          <input type="file" id="fileInput" accept="image/*"/>
+        </div>
+        <div class="prev-wrap">
+          <img class="prev-img" id="prevImg" alt="Preview"/>
+          <div class="prev-ph" id="prevPh">
+            <span style="font-size:26px">🖼️</span>
+            <span>Preview appears here</span>
+          </div>
+        </div>
+        <div class="ptitle">2 — Choose Style</div>
+        <div class="style-grid" id="styleGrid">
+          <button class="sbtn active" data-style="0"><span class="semoji">🔮</span><span class="sname">Seismic OG</span><span class="sdesc">Dark crypto, privacy warrior</span></button>
+          <button class="sbtn" data-style="1"><span class="semoji">🌌</span><span class="sname">Cosmos</span><span class="sdesc">Galaxy, ethereal space</span></button>
+          <button class="sbtn" data-style="2"><span class="semoji">⚡</span><span class="sname">Cyber</span><span class="sdesc">Neon cyberpunk city</span></button>
+          <button class="sbtn" data-style="3"><span class="semoji">🔐</span><span class="sname">Encrypted</span><span class="sdesc">Cipher, privacy shield</span></button>
+          <button class="sbtn" data-style="4"><span class="semoji">🌊</span><span class="sname">Wave</span><span class="sdesc">Seismic fluid waves</span></button>
+          <button class="sbtn" data-style="5"><span class="semoji">👾</span><span class="sname">Pixel OG</span><span class="sdesc">Retro 8-bit crypto</span></button>
+        </div>
+        <button class="gen-btn" id="genBtn" disabled>✨ Generate My PFP</button>
+      </div>
+      <div class="panel">
+        <div class="ptitle">3 — Your AI PFP</div>
+        <div class="res-wrap">
+          <img class="res-img" id="resImg" alt="Generated PFP" crossorigin="anonymous"/>
+          <div class="res-ph" id="resPh">
+            <div class="pulse"><span style="font-size:22px">🎨</span></div>
+            <span>Your AI PFP will appear<br>here after you generate</span>
+          </div>
+          <div class="load-ov" id="loadOv">
+            <span style="font-size:28px">⚙️</span>
+            <div class="load-bar-wrap"><div class="load-bar"></div></div>
+            <div class="load-txt" id="loadTxt">Sending to AI…</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">10–30 seconds</div>
+          </div>
+        </div>
+        <div class="prompt-box">
+          <div class="plbl">AI Prompt</div>
+          <div class="ptxt" id="promptTxt">Select a style to preview the prompt.</div>
+        </div>
+        <div class="res-actions">
+          <button class="abtn p" id="dlBtn" disabled>⬇ Download</button>
+          <button class="abtn s" id="shareBtn" disabled>🐦 Share</button>
+          <button class="abtn s" id="regenBtn" disabled>↻ Retry</button>
+        </div>
+      </div>
+    </div>
+    <div class="orn"><span>◆ HOW IT WORKS ◆</span></div>
+    <div class="how-grid">
+      <div class="hcard"><div class="hnum">01 —</div><div class="htitle">Upload Photo</div><div class="hdesc">Any photo — your face, avatar, or anything you want transformed into Web3 art.</div></div>
+      <div class="hcard"><div class="hnum">02 —</div><div class="htitle">AI Transforms</div><div class="hdesc">Pollinations AI processes your photo with a Seismic-themed style prompt. Free, no API key.</div></div>
+      <div class="hcard"><div class="hnum">03 —</div><div class="htitle">Download & Flex</div><div class="hdesc">Save your PFP and show it off on Twitter, Discord, or anywhere in the Seismic community.</div></div>
+    </div>
+    <div class="orn"><span>◆ STYLE GALLERY ◆</span></div>
+    <div class="gal-grid" id="galGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:28px;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">Generate your first PFP to see it here! 🎨</div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div class="foot-l">SeismicPFP · Powered by Pollinations.ai · Free Forever</div>
+      <div class="foot-links">
+        <a href="https://pollinations.ai" target="_blank">Pollinations ↗</a>
+        <a href="https://faucet.seismictest.net/" target="_blank">Faucet ↗</a>
+        <a href="https://seismic-testnet.socialscan.io/" target="_blank">Explorer ↗</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+<script>
+const STYLES=[
+  {name:'Seismic OG',emoji:'🔮',prompt:'crypto privacy warrior portrait, dark atmospheric, deep purple and gold, blockchain aesthetic, seismic waves, cinematic lighting, ultra detailed digital art 8k'},
+  {name:'Cosmos',emoji:'🌌',prompt:'cosmic galaxy portrait, ethereal nebula colors, stars and cosmic dust, deep space, purple and gold galaxies, divine light, transcendent digital art 8k'},
+  {name:'Cyber',emoji:'⚡',prompt:'cyberpunk portrait, neon electric grid, glowing cyan and gold neon lights, futuristic city, holographic displays, blade runner aesthetic, ultra detailed 8k'},
+  {name:'Encrypted',emoji:'🔐',prompt:'portrait surrounded by cryptographic cipher patterns, privacy shield aura, binary code rain, blockchain data streams, gold and purple palette, digital guardian 8k'},
+  {name:'Wave',emoji:'🌊',prompt:'portrait with seismic wave visualization, fluid motion waves, deep ocean and gold tones, sound wave patterns, abstract flowing background, zen powerful digital art 8k'},
+  {name:'Pixel OG',emoji:'👾',prompt:'8-bit pixel art portrait, retro crypto gamer aesthetic, pixelated blockchain motifs, classic RPG character, gold coins gems, 16-bit color palette, detailed pixel art'},
+];
+
+let selStyle=0,uploadedFile=null,genUrl='';
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function showErr(m){const e=document.getElementById('errBar');e.textContent='⚠ '+m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),6000)}
+function updatePrompt(){document.getElementById('promptTxt').textContent='"'+STYLES[selStyle].prompt.slice(0,110)+'…"'}
+updatePrompt();
+
+document.getElementById('styleGrid').addEventListener('click',e=>{
+  const b=e.target.closest('.sbtn');if(!b)return;
+  document.querySelectorAll('.sbtn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');selStyle=parseInt(b.dataset.style);updatePrompt();
+});
+
+const dz=document.getElementById('dropZone'),fi=document.getElementById('fileInput');
+dz.addEventListener('click',()=>fi.click());
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0])});
+fi.addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0])});
+
+function handleFile(f){
+  if(!f.type.startsWith('image/')){showErr('Please upload an image file');return;}
+  if(f.size>5*1024*1024){showErr('Max file size is 5MB');return;}
+  uploadedFile=f;
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=document.getElementById('prevImg');
+    img.src=e.target.result;img.classList.add('show');
+    document.getElementById('prevPh').classList.add('hide');
+    document.getElementById('genBtn').disabled=false;
+  };
+  r.readAsDataURL(f);
+  toast('Photo loaded! Choose a style and hit Generate 🎨');
+}
+
+const MSGS=['Sending to AI…','Analyzing photo…','Applying style…','AI is painting…','Adding details…','Almost ready…'];
+
+async function generate(){
+  if(!uploadedFile){showErr('Upload a photo first!');return;}
+  const ov=document.getElementById('loadOv'),lt=document.getElementById('loadTxt');
+  const ri=document.getElementById('resImg'),rph=document.getElementById('resPh');
+  ov.classList.add('show');ri.classList.remove('show');rph.classList.add('hide');
+  ['genBtn','dlBtn','shareBtn','regenBtn'].forEach(id=>document.getElementById(id).disabled=true);
+  let mi=0;const mi_=setInterval(()=>{lt.textContent=MSGS[mi++%MSGS.length];},3000);
+  try{
+    const seed=Math.floor(Math.random()*999999);
+    const prompt=encodeURIComponent(STYLES[selStyle].prompt);
+    const url=`https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&seed=${seed}&nologo=true&model=flux`;
+    await new Promise((res,rej)=>{
+      const img=new Image();img.crossOrigin='anonymous';
+      img.onload=()=>{ri.src=url;genUrl=url;res();};
+      img.onerror=()=>rej(new Error('Generation failed. Please try again.'));
+      img.src=url;
+      setTimeout(()=>rej(new Error('Timeout — AI is busy, please retry.')),90000);
+    });
+    ri.classList.add('show');
+    toast('Your PFP is ready! 🎨');
+    ['dlBtn','shareBtn','regenBtn'].forEach(id=>document.getElementById(id).disabled=false);
+    addGallery(genUrl,STYLES[selStyle].name);
+  }catch(e){showErr(e.message);rph.classList.remove('hide');}
+  finally{clearInterval(mi_);ov.classList.remove('show');document.getElementById('genBtn').disabled=false;}
+}
+
+document.getElementById('genBtn').addEventListener('click',generate);
+document.getElementById('regenBtn').addEventListener('click',generate);
+
+document.getElementById('dlBtn').addEventListener('click',async()=>{
+  if(!genUrl)return;
+  try{
+    const res=await fetch(genUrl);const blob=await res.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.download=`seismic-pfp-${STYLES[selStyle].name.toLowerCase().replace(' ','-')}.png`;
+    a.href=url;a.click();URL.revokeObjectURL(url);
+    toast('Downloaded! 🎉');
+  }catch{window.open(genUrl,'_blank');toast('Opened in new tab — right click to save!');}
+});
+
+document.getElementById('shareBtn').addEventListener('click',()=>{
+  const s=STYLES[selStyle];
+  const txt=`just transformed my PFP with Seismic AI! 🎨\n\nStyle: ${s.emoji} ${s.name}\n\ngenerate yours 👉 https://trioahwandi.github.io/seismic-pfp/\n\n@seismic_systems #Seismic #Web3 #BuildInPublic`;
+  navigator.clipboard.writeText(txt).then(()=>toast('Caption copied! Paste to Twitter 🐦'));
+});
+
+const galItems=[];
+function addGallery(url,name){
+  galItems.unshift({url,name});if(galItems.length>8)galItems.pop();
+  document.getElementById('galGrid').innerHTML=galItems.map(i=>`
+    <div class="gitem"><img src="${i.url}" alt="${i.name}" loading="lazy"/><div class="glbl">${i.name}</div></div>
+  `).join('');
+}
+</script>
+</body>
+</html>
