@@ -10,7 +10,6 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 .bg{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 100% 70% at 0% 0%,rgba(82,48,64,0.45) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 100% 100%,rgba(130,90,109,0.2) 0%,transparent 55%)}
-.noise{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px}
 .wrap{max-width:860px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
 header{border-bottom:1px solid var(--b1);background:rgba(22,16,18,0.92);backdrop-filter:blur(24px);position:sticky;top:0;z-index:200}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:15px 0}
@@ -30,22 +29,25 @@ header{border-bottom:1px solid var(--b1);background:rgba(22,16,18,0.92);backdrop
 .hero h1 span{color:var(--gold)}
 .hero p{font-size:13px;color:var(--muted2);line-height:1.7;max-width:460px;margin:0 auto}
 
-/* API Key box */
-.apikey-box{background:var(--s1);border:1px solid rgba(166,146,77,.25);border-radius:16px;padding:20px 22px;margin-bottom:24px;position:relative;overflow:hidden}
+/* API Key - collapsed state */
+.apikey-collapsed{display:flex;align-items:center;justify-content:space-between;background:var(--s1);border:1px solid rgba(109,191,138,.2);border-radius:12px;padding:12px 16px;margin-bottom:20px}
+.apikey-collapsed.hide{display:none}
+.apikey-ok{font-family:'Space Mono',monospace;font-size:11px;color:var(--green);display:flex;align-items:center;gap:8px}
+.apikey-change{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);background:transparent;border:1px solid var(--b2);border-radius:6px;padding:4px 10px;cursor:pointer;transition:all .2s}
+.apikey-change:hover{color:var(--gold);border-color:rgba(166,146,77,.3)}
+
+/* API Key - expanded state */
+.apikey-box{background:var(--s1);border:1px solid rgba(166,146,77,.25);border-radius:16px;padding:20px 22px;margin-bottom:20px;position:relative;overflow:hidden}
+.apikey-box.hide{display:none}
 .apikey-box::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(166,146,77,.06) 0%,transparent 60%);pointer-events:none}
-.apikey-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;position:relative;z-index:1}
-.apikey-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px}
-.apikey-title::before{content:'🔑'}
-.apikey-status{font-family:'Space Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid}
-.apikey-status.ok{color:var(--green);border-color:rgba(109,191,138,.3);background:rgba(109,191,138,.08)}
-.apikey-status.empty{color:var(--muted);border-color:var(--b1);background:transparent}
+.apikey-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px;position:relative;z-index:1}
 .apikey-row{display:flex;gap:8px;position:relative;z-index:1}
-.apikey-input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--b2);border-radius:10px;padding:11px 14px;font-family:'Space Mono',monospace;font-size:11px;color:var(--cream);outline:none;transition:border-color .25s;letter-spacing:.5px}
-.apikey-input::placeholder{color:var(--muted);letter-spacing:0}
+.apikey-input{flex:1;background:rgba(0,0,0,.3);border:1px solid var(--b2);border-radius:10px;padding:11px 14px;font-family:'Space Mono',monospace;font-size:11px;color:var(--cream);outline:none;transition:border-color .25s}
+.apikey-input::placeholder{color:var(--muted)}
 .apikey-input:focus{border-color:rgba(166,146,77,.5);box-shadow:0 0 0 3px rgba(166,146,77,.07)}
-.apikey-save{padding:11px 18px;background:var(--gold2);border:1px solid rgba(166,146,77,.3);border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--gold);cursor:pointer;transition:all .2s;white-space:nowrap}
-.apikey-save:hover{background:rgba(166,146,77,.2)}
-.apikey-hint{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:9px;position:relative;z-index:1;line-height:1.6}
+.apikey-save{padding:11px 18px;background:linear-gradient(135deg,var(--plum),var(--mauve));border:1px solid rgba(166,146,77,.2);border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--cream);cursor:pointer;transition:all .2s;white-space:nowrap}
+.apikey-save:hover{box-shadow:0 4px 14px rgba(130,90,109,.3)}
+.apikey-hint{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:10px;position:relative;z-index:1;line-height:1.7}
 .apikey-hint a{color:var(--gold);text-decoration:none}
 .apikey-hint a:hover{text-decoration:underline}
 
@@ -135,7 +137,6 @@ main{padding:0 0 40px}
 </head>
 <body>
 <div class="bg"></div>
-<div class="noise"></div>
 <header>
   <div class="wrap">
     <div class="hdr">
@@ -144,7 +145,6 @@ main{padding:0 0 40px}
           <svg viewBox="0 0 20 20" fill="none" width="20" height="20">
             <circle cx="10" cy="8" r="4" stroke="#A6924D" stroke-width="1.5"/>
             <path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="#A6924D" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M15 3l2-2M17 7h1.5" stroke="#A6924D" stroke-width="1" stroke-linecap="round" opacity=".5"/>
           </svg>
         </div>
         <span class="logo-name">Seismic<em>PFP</em></span>
@@ -163,23 +163,27 @@ main{padding:0 0 40px}
       <p>Upload any photo — AI transforms it into a Web3 themed PFP. Powered by Hugging Face, free tier available.</p>
     </div>
 
-    <!-- API Key Box -->
-    <div class="apikey-box">
-      <div class="apikey-top">
-        <div class="apikey-title">Hugging Face API Key</div>
-        <div class="apikey-status" id="apiStatus">Not set</div>
-      </div>
+    <!-- API Key collapsed (shown when key saved) -->
+    <div class="apikey-collapsed hide" id="apiCollapsed">
+      <div class="apikey-ok">🔐 API Key saved — ready to generate!</div>
+      <button class="apikey-change" id="apiChangeBtn">Change Key</button>
+    </div>
+
+    <!-- API Key expanded (shown when no key) -->
+    <div class="apikey-box" id="apiBox">
+      <div class="apikey-title">🔑 Hugging Face API Key</div>
       <div class="apikey-row">
         <input class="apikey-input" id="apiKeyInput" type="password" placeholder="hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false"/>
         <button class="apikey-save" id="apiKeySave">Save Key</button>
       </div>
       <div class="apikey-hint">
-        🔒 Your key is stored locally in your browser only — never sent to anyone except Hugging Face.<br>
-        Don't have a key? Get one free at <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co/settings/tokens</a> → Create token → Check <strong>Inference → Make calls to Inference Providers</strong>
+        🔒 Stored only in your browser — never sent to anyone except Hugging Face.<br>
+        No key yet? Get free at <a href="https://huggingface.co/settings/tokens" target="_blank">huggingface.co/settings/tokens</a> → New token → centang <strong>Inference → Make calls to Inference Providers</strong>
       </div>
     </div>
 
     <div class="err" id="errBar"></div>
+
     <div class="main-grid">
       <div class="panel">
         <div class="ptitle">1 — Upload Your Photo</div>
@@ -197,7 +201,7 @@ main{padding:0 0 40px}
           </div>
         </div>
         <div class="ptitle">2 — Choose Style</div>
-        <div class="style-grid" id="styleGrid">
+        <div class="style-grid">
           <button class="sbtn active" data-style="0"><span class="semoji">🔮</span><span class="sname">Seismic OG</span><span class="sdesc">Dark crypto, privacy warrior</span></button>
           <button class="sbtn" data-style="1"><span class="semoji">🌌</span><span class="sname">Cosmos</span><span class="sdesc">Galaxy, ethereal space</span></button>
           <button class="sbtn" data-style="2"><span class="semoji">⚡</span><span class="sname">Cyber</span><span class="sdesc">Neon cyberpunk city</span></button>
@@ -233,12 +237,14 @@ main{padding:0 0 40px}
         </div>
       </div>
     </div>
+
     <div class="orn"><span>◆ HOW IT WORKS ◆</span></div>
     <div class="how-grid">
-      <div class="hcard"><div class="hnum">01 —</div><div class="htitle">Set API Key</div><div class="hdesc">Paste your free Hugging Face API key. Stored only in your browser, never shared.</div></div>
+      <div class="hcard"><div class="hnum">01 —</div><div class="htitle">Set API Key</div><div class="hdesc">Paste your free Hugging Face API key once. Stored only in your browser.</div></div>
       <div class="hcard"><div class="hnum">02 —</div><div class="htitle">Upload & Style</div><div class="hdesc">Upload your photo and pick a Seismic-themed art style to transform it into.</div></div>
-      <div class="hcard"><div class="hnum">03 —</div><div class="htitle">Download & Flex</div><div class="hdesc">Save your new PFP and show it off on Twitter, Discord, or the Seismic community.</div></div>
+      <div class="hcard"><div class="hnum">03 —</div><div class="htitle">Download & Flex</div><div class="hdesc">Save your new PFP and flex it on Twitter, Discord, or the Seismic community.</div></div>
     </div>
+
     <div class="orn"><span>◆ GALLERY ◆</span></div>
     <div class="gal-grid" id="galGrid">
       <div style="grid-column:1/-1;text-align:center;padding:28px;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">Generate your first PFP to see it here! 🎨</div>
@@ -248,7 +254,7 @@ main{padding:0 0 40px}
 <footer>
   <div class="wrap">
     <div class="foot">
-      <div class="foot-l">SeismicPFP · Powered by Hugging Face · API key stored locally</div>
+      <div class="foot-l">SeismicPFP · Powered by Hugging Face · Key stored locally only</div>
       <div class="foot-links">
         <a href="https://huggingface.co/settings/tokens" target="_blank">Get API Key ↗</a>
         <a href="https://faucet.seismictest.net/" target="_blank">Faucet ↗</a>
@@ -260,68 +266,78 @@ main{padding:0 0 40px}
 <div class="toast" id="toast"></div>
 <script>
 const STYLES=[
-  {name:'Seismic OG',emoji:'🔮',prompt:'crypto privacy warrior, dark atmospheric background, deep purple and gold, blockchain aesthetic, seismic waves, cinematic lighting, ultra detailed digital art, 8k, trending artstation'},
-  {name:'Cosmos',emoji:'🌌',prompt:'cosmic galaxy portrait, ethereal nebula colors, stars and cosmic dust, deep space background, purple and gold galaxies, divine light rays, transcendent digital art, 8k'},
-  {name:'Cyber',emoji:'⚡',prompt:'cyberpunk neon portrait, electric grid background, glowing cyan and gold neon lights, futuristic city, holographic displays, blade runner aesthetic, ultra detailed, 8k'},
-  {name:'Encrypted',emoji:'🔐',prompt:'cryptographic cipher art portrait, privacy shield aura, binary code rain, encrypted blockchain data streams, gold and dark purple palette, digital guardian, 8k'},
-  {name:'Wave',emoji:'🌊',prompt:'seismic wave visualization portrait, fluid motion waves, deep ocean and gold tones, sound wave patterns, abstract flowing background, zen powerful aesthetic, 8k'},
-  {name:'Pixel OG',emoji:'👾',prompt:'8-bit pixel art portrait, retro crypto gamer, pixelated blockchain motifs, classic RPG character, gold coins and gems, 16-bit color palette, detailed pixel art'},
+  {name:'Seismic OG',emoji:'🔮',prompt:'crypto privacy warrior, dark atmospheric, deep purple and gold, blockchain aesthetic, seismic waves, cinematic lighting, ultra detailed digital art 8k'},
+  {name:'Cosmos',emoji:'🌌',prompt:'cosmic galaxy portrait, ethereal nebula, stars and cosmic dust, deep space, purple and gold galaxies, transcendent digital art 8k'},
+  {name:'Cyber',emoji:'⚡',prompt:'cyberpunk neon portrait, electric grid, glowing cyan and gold neon, futuristic city, holographic displays, blade runner aesthetic 8k'},
+  {name:'Encrypted',emoji:'🔐',prompt:'cryptographic cipher art, privacy shield aura, binary code rain, blockchain data streams, gold and dark purple palette, digital guardian 8k'},
+  {name:'Wave',emoji:'🌊',prompt:'seismic wave visualization, fluid motion waves, deep ocean and gold tones, sound wave patterns, abstract flowing background, zen powerful digital art 8k'},
+  {name:'Pixel OG',emoji:'👾',prompt:'8-bit pixel art portrait, retro crypto gamer, pixelated blockchain motifs, RPG character, gold coins gems, 16-bit color palette, detailed pixel art'},
+];
+
+// Models to try in order (fallback chain)
+const MODELS=[
+  'stabilityai/stable-diffusion-2-1',
+  'runwayml/stable-diffusion-v1-5',
+  'CompVis/stable-diffusion-v1-4',
 ];
 
 let selStyle=0,uploadedFile=null,genBlob=null;
 
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
-function showErr(m){const e=document.getElementById('errBar');e.textContent='⚠ '+m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),7000)}
+function showErr(m){const e=document.getElementById('errBar');e.textContent='⚠ '+m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),8000)}
 
 // ── API Key ──
-function getKey(){return localStorage.getItem('hf_api_key')||''}
-function setKey(k){localStorage.setItem('hf_api_key',k)}
+function getKey(){return localStorage.getItem('hf_key')||''}
+function saveKey(k){localStorage.setItem('hf_key',k)}
+function clearKey(){localStorage.removeItem('hf_key')}
 
-function updateKeyStatus(){
+function renderKeyUI(){
   const k=getKey();
-  const st=document.getElementById('apiStatus');
-  const inp=document.getElementById('apiKeyInput');
+  const box=document.getElementById('apiBox');
+  const col=document.getElementById('apiCollapsed');
   if(k){
-    st.textContent='✓ Key saved';st.className='apikey-status ok';
-    inp.placeholder='hf_••••••••••••••••••••••••••••••••';
-    updateGenBtn();
+    box.classList.add('hide');
+    col.classList.remove('hide');
   } else {
-    st.textContent='Not set';st.className='apikey-status empty';
+    box.classList.remove('hide');
+    col.classList.add('hide');
   }
+  updateGenBtn();
 }
 
 document.getElementById('apiKeySave').addEventListener('click',()=>{
   const val=document.getElementById('apiKeyInput').value.trim();
   if(!val){showErr('Please enter your Hugging Face API key');return;}
-  if(!val.startsWith('hf_')){showErr('Invalid key format — must start with hf_');return;}
-  setKey(val);
+  if(!val.startsWith('hf_')){showErr('Invalid key — must start with hf_');return;}
+  saveKey(val);
   document.getElementById('apiKeyInput').value='';
-  updateKeyStatus();
-  toast('API key saved securely! 🔐');
-  updateGenBtn();
+  renderKeyUI();
+  toast('API key saved! 🔐 Ready to generate');
 });
 
-function updateGenBtn(){
-  const hasKey=!!getKey();
-  const hasFile=!!uploadedFile;
-  document.getElementById('genBtn').disabled=!(hasKey&&hasFile);
-}
+document.getElementById('apiChangeBtn').addEventListener('click',()=>{
+  clearKey();renderKeyUI();
+  toast('Key removed — enter a new one');
+});
 
-updateKeyStatus();
-
-// ── Prompt ──
+// ── Style ──
 function updatePrompt(){
-  document.getElementById('promptTxt').textContent='"'+STYLES[selStyle].prompt.slice(0,120)+'…"';
+  document.getElementById('promptTxt').textContent='"'+STYLES[selStyle].prompt+'"';
 }
 updatePrompt();
 
-document.getElementById('styleGrid').addEventListener('click',e=>{
-  const b=e.target.closest('.sbtn');if(!b)return;
+document.querySelectorAll('.sbtn').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.sbtn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');selStyle=parseInt(b.dataset.style);updatePrompt();
-});
+  b.classList.add('active');
+  selStyle=parseInt(b.dataset.style);
+  updatePrompt();
+}));
 
-// ── File upload ──
+// ── Upload ──
+function updateGenBtn(){
+  document.getElementById('genBtn').disabled=!(getKey()&&uploadedFile);
+}
+
 const dz=document.getElementById('dropZone'),fi=document.getElementById('fileInput');
 dz.addEventListener('click',()=>fi.click());
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
@@ -345,7 +361,29 @@ function handleFile(f){
 }
 
 // ── Generate ──
-const MSGS=['Sending to AI…','Analyzing photo…','Applying Seismic style…','AI is painting…','Adding details…','Almost ready…'];
+const MSGS=['Sending to AI…','Analyzing photo…','Applying style…','AI is painting…','Adding details…','Almost ready…'];
+
+async function tryModel(model,prompt,key){
+  const res=await fetch(`https://api-inference.huggingface.co/models/${model}`,{
+    method:'POST',
+    headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+    body:JSON.stringify({inputs:prompt,parameters:{width:512,height:512,num_inference_steps:20}})
+  });
+  if(res.status===401) throw new Error('invalid_key');
+  if(res.status===503){
+    // Model loading, wait and retry once
+    await new Promise(r=>setTimeout(r,15000));
+    const res2=await fetch(`https://api-inference.huggingface.co/models/${model}`,{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+      body:JSON.stringify({inputs:prompt,parameters:{width:512,height:512,num_inference_steps:20}})
+    });
+    if(!res2.ok) throw new Error('model_unavailable');
+    return res2.blob();
+  }
+  if(!res.ok) throw new Error('model_unavailable');
+  return res.blob();
+}
 
 async function generate(){
   const key=getKey();
@@ -357,42 +395,33 @@ async function generate(){
 
   ov.classList.add('show');ri.classList.remove('show');rph.classList.add('hide');
   ['genBtn','dlBtn','shareBtn','regenBtn'].forEach(id=>document.getElementById(id).disabled=true);
+  document.getElementById('errBar').classList.remove('show');
 
   let mi=0;
   const mi_=setInterval(()=>{lt.textContent=MSGS[mi++%MSGS.length];},4000);
 
   try{
     const prompt=STYLES[selStyle].prompt;
+    let blob=null;
 
-    // Call Hugging Face Inference API - FLUX model
-    const response=await fetch(
-      'https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev',
-      {
-        method:'POST',
-        headers:{
-          'Authorization':'Bearer '+key,
-          'Content-Type':'application/json',
-        },
-        body:JSON.stringify({
-          inputs:prompt,
-          parameters:{width:512,height:512,num_inference_steps:25}
-        })
+    // Try each model in order
+    for(const model of MODELS){
+      try{
+        lt.textContent='Trying '+model.split('/')[1]+'…';
+        blob=await tryModel(model,prompt,key);
+        break;
+      }catch(e){
+        if(e.message==='invalid_key') throw new Error('Invalid API key. Please check your Hugging Face token.');
+        // Try next model
+        continue;
       }
-    );
-
-    if(!response.ok){
-      const err=await response.json().catch(()=>({}));
-      if(response.status===401) throw new Error('Invalid API key. Please check your Hugging Face token.');
-      if(response.status===503) throw new Error('Model is loading, please wait 20 seconds and retry.');
-      if(response.status===429) throw new Error('Rate limit reached. Please wait a moment and retry.');
-      throw new Error(err.error||'Generation failed ('+response.status+'). Please retry.');
     }
 
-    const blob=await response.blob();
+    if(!blob) throw new Error('All models unavailable. Please try again in a few minutes.');
+
     genBlob=blob;
     const url=URL.createObjectURL(blob);
-    ri.src=url;
-    ri.classList.add('show');
+    ri.src=url;ri.classList.add('show');
     rph.classList.add('hide');
     toast('Your PFP is ready! 🎨');
     ['dlBtn','shareBtn','regenBtn'].forEach(id=>document.getElementById(id).disabled=false);
@@ -411,33 +440,31 @@ async function generate(){
 document.getElementById('genBtn').addEventListener('click',generate);
 document.getElementById('regenBtn').addEventListener('click',generate);
 
-// ── Download ──
 document.getElementById('dlBtn').addEventListener('click',()=>{
   if(!genBlob)return;
   const url=URL.createObjectURL(genBlob);
   const a=document.createElement('a');
   a.download=`seismic-pfp-${STYLES[selStyle].name.toLowerCase().replace(' ','-')}.png`;
-  a.href=url;a.click();
-  URL.revokeObjectURL(url);
+  a.href=url;a.click();URL.revokeObjectURL(url);
   toast('Downloaded! 🎉');
 });
 
-// ── Share ──
 document.getElementById('shareBtn').addEventListener('click',()=>{
   const s=STYLES[selStyle];
   const txt=`just transformed my PFP with Seismic AI! 🎨\n\nStyle: ${s.emoji} ${s.name}\n\ngenerate yours 👉 https://seismic-pfp.vercel.app\n\n@seismic_systems #Seismic #Web3 #BuildInPublic`;
-  navigator.clipboard.writeText(txt).then(()=>toast('Caption copied! Paste to Twitter 🐦'));
+  navigator.clipboard.writeText(txt).then(()=>toast('Caption copied! 🐦'));
 });
 
-// ── Gallery ──
 const galItems=[];
 function addGallery(url,name){
-  galItems.unshift({url,name});
-  if(galItems.length>8)galItems.pop();
+  galItems.unshift({url,name});if(galItems.length>8)galItems.pop();
   document.getElementById('galGrid').innerHTML=galItems.map(i=>`
     <div class="gitem"><img src="${i.url}" alt="${i.name}" loading="lazy"/><div class="glbl">${i.name}</div></div>
   `).join('');
 }
+
+// Init
+renderKeyUI();
 </script>
 </body>
 </html>
